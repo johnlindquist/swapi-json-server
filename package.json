@@ -16,7 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "fs-extra": "0.30.0",
-    "json-server": "0.8.22",
+    "json-server": "0.8.23",
     "lowdb": "0.14.0",
     "serve-static": "^1.13.2"
   }
