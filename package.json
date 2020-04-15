@@ -1,5 +1,6 @@
 {
   "name": "swapi-json-server",
+  "target": "node",
   "bin": "./bin/app.js",
   "main": "app.js",
   "repository": {
