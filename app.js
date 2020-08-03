@@ -192,9 +192,6 @@ server.get('/meta/runtime', (req, res) => {
   });
 });
 
-// INFO: When writing the documentation, look at the keys for this object and it will give you the endpoints
-console.log('relation db high level endpoints \n');
-Object.keys(relationDb).forEach((key) => console.log('key', key));
 const router = jsonServer.router(relationDb);
 server.use(router);
 
