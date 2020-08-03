@@ -13,6 +13,7 @@ For pagination and filtering refer to these docs. [https://www.npmjs.com/package
 - [Starships](#starships)
 - [Transport](#transport)
 - [Vehicles](#vehicles)
+- [Meta](#meta)
 
 ### Films
 
@@ -584,5 +585,38 @@ Success Response
   "cost_in_credits": "150000",
   "manufacturer": "Corellia Mining Corporation",
   "image": "sand_crawler.jpg"
+}
+```
+
+### Meta
+
+Base URL: `/meta`
+
+#### Get server uptime
+
+URL: `/meta/runtime`
+
+Query Strings Accepted: `?measurement=value`
+
+Valid measurement values accepted are shown below. If non-valid or no measurement is passed, it will default to seconds.
+
+```
+const validMeasurmements = [
+    'days',
+    'years',
+    'months',
+    'weeks',
+    'days',
+    'hours',
+    'minutes',
+    'seconds',
+  ]
+```
+
+Success Response
+
+```json
+{
+  "timeSinceLastReboot": "6 seconds"
 }
 ```
