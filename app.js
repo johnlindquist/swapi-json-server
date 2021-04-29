@@ -15,54 +15,43 @@ const db = {
   species,
   starships,
   transport,
-  vehicles
+  vehicles,
 }
 
 /**
  * Lifting the "fields" to the root of the object
  * Using the "pk" as the "id"
  */
-const fdb = Object.keys(db).reduce(
-  (acc, current) => {
-    acc[current] = db[current].map(item => {
-      return Object.assign(item.fields, {
-        id: item.pk
-      })
+const fdb = Object.keys(db).reduce((acc, current) => {
+  acc[current] = db[current].map(item => {
+    return Object.assign(item.fields, {
+      id: item.pk,
     })
+  })
 
-    return acc
-  },
-  {}
-)
+  return acc
+}, {})
 
 /**
  * Vehicles and Starships "extend" Transport...
  */
 
-const xdb = Object.keys(fdb).reduce(
-  (acc, current) => {
-    if (
-      current === "starships" ||
-      current === "vehicles"
-    ) {
-      acc[current] = acc[current].map(item => {
-        const transport = acc["transport"].find(
-          elm => {
-            return elm.id === item.id
-          }
-        )
-
-        if (transport) {
-          return Object.assign(item, transport)
-        }
-
-        return item
+const xdb = Object.keys(fdb).reduce((acc, current) => {
+  if (current === "starships" || current === "vehicles") {
+    acc[current] = acc[current].map(item => {
+      const transport = acc["transport"].find(elm => {
+        return elm.id === item.id
       })
-    }
-    return acc
-  },
-  fdb
-)
+
+      if (transport) {
+        return Object.assign(item, transport)
+      }
+
+      return item
+    })
+  }
+  return acc
+}, fdb)
 
 /**
  * Relation definitions to match them with swapi.co
@@ -75,21 +64,21 @@ const relations = [
         alias: "vehicles",
         table: "vehicles",
         name: "pilots",
-        type: Array
+        type: Array,
       },
       {
         alias: "starships",
         table: "starships",
         name: "pilots",
-        type: Array
+        type: Array,
       },
       {
         alias: "films",
         table: "films",
         name: "characters",
-        type: Array
-      }
-    ]
+        type: Array,
+      },
+    ],
   },
   {
     name: "planets",
@@ -98,15 +87,15 @@ const relations = [
         alias: "residents",
         table: "people",
         name: "homeworld",
-        type: Number
+        type: Number,
       },
       {
         alias: "films",
         table: "films",
         name: "planets",
-        type: Array
-      }
-    ]
+        type: Array,
+      },
+    ],
   },
   {
     name: "starships",
@@ -115,10 +104,10 @@ const relations = [
         alias: "films",
         table: "films",
         name: "starships",
-        type: Array
-      }
-    ]
-  }
+        type: Array,
+      },
+    ],
+  },
 ]
 
 function addRelation(db, host, relations) {
@@ -135,29 +124,22 @@ function addRelation(db, host, relations) {
     }
 
     acc[alias] = db[table]
-      .filter(
-        item => item[name].indexOf(host.id) > -1
-      )
+      .filter(item => item[name].indexOf(host.id) > -1)
       .map(item => item.id)
 
     return acc
   }, {})
 }
 
-const relationDb = relations.reduce(
-  (acc, current) => {
-    acc[current.name] = acc[current.name].map(
-      item => {
-        return Object.assign(
-          item,
-          addRelation(acc, item, current.relation)
-        )
-      }
+const relationDb = relations.reduce((acc, current) => {
+  acc[current.name] = acc[current.name].map(item => {
+    return Object.assign(
+      item,
+      addRelation(acc, item, current.relation)
     )
-    return acc
-  },
-  xdb
-)
+  })
+  return acc
+}, xdb)
 
 const server = jsonServer.create()
 
@@ -165,7 +147,7 @@ const serveStatic = require("serve-static")
 const path = require("path")
 server.use(
   serveStatic(path.join(__dirname, "public"), {
-    maxAge: "1d"
+    maxAge: "1d",
   })
 )
 
@@ -186,5 +168,5 @@ server.use(jsonServer.defaults())
 const router = jsonServer.router(relationDb)
 server.use(router)
 
-server.listen(3000)
+server.listen(process.env.PORT || 3000)
 console.log(`Server started on port 3000`)
